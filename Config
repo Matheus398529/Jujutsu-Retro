@@ -1,1 +1,135 @@
 
+local TweenService = game:GetService("TweenService")
+
+local Place1 = 118593528336896
+local Place2 = 92789987254034
+
+local Script1 = "https://raw.githubusercontent.com/Matheus398529/Jujutsu-Retr-Partida-normal-/refs/heads/main/Config"
+local Script2 = "https://raw.githubusercontent.com/Matheus398529/Jujutsu-Retro-Jogo-do-abate-/refs/heads/main/Config"
+
+local Gui = Instance.new("ScreenGui")
+Gui.Name = "SystemVerification"
+Gui.ResetOnSpawn = false
+Gui.Parent = game:GetService("CoreGui")
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 300, 0, 145)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -72)
+Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+Frame.Parent = Gui
+
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 8)
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(200, 80, 0)
+Stroke.Thickness = 2
+Stroke.Parent = Frame
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.BackgroundTransparency = 1
+Title.Text = "SYSTEM VERIFICATION"
+Title.TextColor3 = Color3.fromRGB(255, 130, 40)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.Parent = Frame
+
+local Status = Instance.new("TextLabel")
+Status.Position = UDim2.new(0, 10, 0, 45)
+Status.Size = UDim2.new(1, -20, 0, 25)
+Status.BackgroundTransparency = 1
+Status.Text = "Inicializando sistema..."
+Status.TextColor3 = Color3.new(1, 1, 1)
+Status.Font = Enum.Font.Gotham
+Status.TextSize = 12
+Status.Parent = Frame
+
+local Background = Instance.new("Frame")
+Background.Position = UDim2.new(0, 15, 0, 85)
+Background.Size = UDim2.new(1, -30, 0, 12)
+Background.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Background.Parent = Frame
+
+Instance.new("UICorner", Background).CornerRadius = UDim.new(1, 0)
+
+local Bar = Instance.new("Frame")
+Bar.Size = UDim2.new(0, 0, 1, 0)
+Bar.BackgroundColor3 = Color3.fromRGB(220, 90, 0)
+Bar.Parent = Background
+
+Instance.new("UICorner", Bar).CornerRadius = UDim.new(1, 0)
+
+local Percent = Instance.new("TextLabel")
+Percent.Position = UDim2.new(0, 0, 0, 105)
+Percent.Size = UDim2.new(1, 0, 0, 25)
+Percent.BackgroundTransparency = 1
+Percent.Text = "0%"
+Percent.TextColor3 = Color3.fromRGB(200, 200, 200)
+Percent.Font = Enum.Font.Gotham
+Percent.TextSize = 11
+Percent.Parent = Frame
+
+local function Load(messages)
+    for i = 1, 100 do
+        local index = math.min(
+            math.ceil(i / (100 / #messages)),
+            #messages
+        )
+
+        Status.Text = messages[index]
+        Percent.Text = i .. "%"
+
+        TweenService:Create(
+            Bar,
+            TweenInfo.new(0.025),
+            {Size = UDim2.new(i / 100, 0, 1, 0)}
+        ):Play()
+
+        task.wait(0.025)
+    end
+end
+
+local function Execute(url)
+    Status.Text = "Verificação aprovada!"
+    task.wait(0.5)
+    Gui:Destroy()
+
+    loadstring(game:HttpGet(url, true))()
+end
+
+Load({
+    "Inicializando sistema...",
+    "Carregando módulos...",
+    "Analisando configurações...",
+    "Verificando compatibilidade...",
+    "Preparando interface...",
+    "Verificando PlaceId..."
+})
+
+if game.PlaceId == Place1 then
+    Execute(Script1)
+else
+    Status.Text = "Verificação secundária ativada!"
+    task.wait(1)
+
+    Bar.Size = UDim2.new(0, 0, 1, 0)
+
+    Load({
+        "Verificação secundária ativada!",
+        "Analisando ambiente...",
+        "Buscando segunda compatibilidade...",
+        "Verificando configurações...",
+        "Validando PlaceId...",
+        "Finalizando verificação..."
+    })
+
+    if game.PlaceId == Place2 then
+        Execute(Script2)
+    else
+        Status.Text = "Você só pode usar isso em partida"
+        Percent.Text = ""
+        Bar.Size = UDim2.new(0, 0, 1, 0)
+        task.wait(3)
+        Gui:Destroy()
+    end
+end
